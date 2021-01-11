@@ -1,0 +1,20 @@
+.THIS .header{
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   background: #e3e3e3;
+}
+
+.THIS .logo img{
+   max-width: 100px;
+   margin: 15px;
+   object-fit: cover;
+}
+
+.THIS .header-right {
+   margin: 15px;
+   text-transform: uppercase;
+   letter-spacing: 1.2px;
+   font-size: 20px;
+   color: #847171;
+}

@@ -1,0 +1,43 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId,force:hasSObjectName"
+	access="global">
+
+	<META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8" />
+	<aura:handler name="init" action="{!c.getImage}" value="{!this}" />
+	<aura:attribute name="selectPriority" type="Boolean" default="false" />
+	<aura:attribute name="getval" type="SObject[]" />
+	<aura:attribute name="img" type="String" />
+	
+	<div class='wrapper'>
+		<div class='wrapper-form'>
+			<h2 class='title'>contact us</h2>
+			<form class='form-info' onsubmit="{!c.getDataForm}"
+				action="https://webto.salesforce.com/servlet/servlet.WebToCase?encoding=UTF-8" method="POST">
+				<input type='hidden' name="orgid" value="00D5g000001FDbr" />
+				<input type='hidden' name="retURL"
+					value="https://new-communities1-developer-edition.ap24.force.com/language/s/cardreampage" />
+				<p>Email<img src="{!v.img.image}" alt='required' /></p>
+				<input type='email' name='email' tabindex='1' required='true' placeholder="Enter your email"
+					class='form-email' />
+				<p>Сategory<img src="{!v.img.image}" alt='required' /></p>
+				<select id="reason" name="reason" class="form-select" onchange="{!c.getFieldSelect}">
+					<option value="Installation">Installation</option>
+					<option value="Financial Claim">Financial Claim</option>
+					<option value="General Question(default)">General Question(default)</option>
+				</select>
+				<p>Description of the appeal<img src="{!v.img.image}" alt='required' /></p>
+				<textarea class='form-description' name="description" label="" placeholder="Type here..." required='true' />
+				<aura:if isTrue="{!v.selectPriority}">
+					<select id="priority" name="priority" class="hidden">
+						<option value="Medium">Medium</option>
+					</select>
+					<aura:set attribute="else">
+						<select id="priority" name="priority" class="hidden">
+							<option value="High">High</option>
+						</select>
+					</aura:set>
+				</aura:if>
+				<button class='btn'>Submit</button>
+			</form>
+		</div>
+	</div>
+</aura:component>
