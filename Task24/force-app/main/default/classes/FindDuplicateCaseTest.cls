@@ -142,7 +142,9 @@ public class FindDuplicateCaseTest {
       
       System.assertEquals('----//---- test',Cases[0].Description);
             
-      System.assertEquals('Medium',Cases[0].Priority);
+		System.assertEquals('Medium',Cases[0].Priority);
+		
+		System.assertNotEquals('E_otner - Europe other',Cases[1].Country__c);
       
 		System.assertEquals('hirocy',Cases[0].SuppliedName__c);
             
