@@ -83,8 +83,8 @@ public class FindDuplicateCase {
          }
          if(caseObject.SuppliedName__c  == null && mergeCaseFields.SuppliedName__c !=null){
             caseObject.SuppliedName__c =mergeCaseFields.SuppliedName__c ;
-			}
-			if(caseObject.Country__c  == null && mergeCaseFields.Country__c !=null){
+         }
+         if(caseObject.Country__c  == null && mergeCaseFields.Country__c !=null){
             caseObject.Country__c=mergeCaseFields.Country__c;
          }
          if(mergeCaseFields.Account.Language__c == null || mergeCaseFields.Account.Language__c =='EN' ){
