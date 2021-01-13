@@ -14,9 +14,10 @@ public class cardsControllerTest {
    }
    static testMethod void  testCards(){
 
-   cardsController.getProductAuto();
-   Product2  prod=[SELECT Id,Family FROM Product2 WHERE Family='auto' AND IsActive__c=true];
+   List<Product2> prod =cardsController.getProductAuto();
+   prod=[SELECT Id,Family,Description FROM Product2 WHERE Family='auto' AND IsActive__c=true];
       
-	System.assertEquals('auto', String.valueOf(prod.Family));
+   System.assertEquals('auto', String.valueOf(prod[0].Family));
+   System.assertEquals('New car', String.valueOf(prod[0].Description));
    }
 }
