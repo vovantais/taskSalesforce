@@ -25,13 +25,16 @@ public class displayImageControllerTest {
    
    static testMethod void  testCreate(){ 
       
-      Account acct =[SELECT Id FROM Account];
+   Account acct =[SELECT Id FROM Account];
 
-      displayImageController.getImage(acct.Id);
+   List<String> linkFiles= displayImageController.getImage(acct.Id);
+   List<String> linkUrl =new List<String>();
 
-      List<ContentDocumentLink> cdLink =[SELECT ContentDocumentId FROM ContentDocumentLink WHERE LinkedEntityId=:acct.Id];  
+      List<ContentDocumentLink> cdLinks =[SELECT ContentDocumentId,ContentDocument.LatestPublishedVersionID FROM ContentDocumentLink WHERE LinkedEntityId=:acct.Id];
+         for(ContentDocumentLink cdl: cdLinks){
+            linkUrl.add(URL.getSalesforceBaseUrl().toExternalForm() +'/sfc/servlet.shepherd/version/download/'+cdl.ContentDocument.LatestPublishedVersionID);  
+      }
       
-      System.assertEquals(1,cdLink.size());
-      
+      System.assertEquals(linkFiles,linkUrl);
    }
 }
