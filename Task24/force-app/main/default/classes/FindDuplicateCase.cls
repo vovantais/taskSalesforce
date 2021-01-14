@@ -11,10 +11,9 @@ public class FindDuplicateCase {
       List<Case> duplicateCaseList = new List<Case>();
       if(caseRecordID != null){
             Case caseObject =getMainCase(caseRecordID);
-            List<Case> allCasesWithoutMainCase =getAllCaseWithoutMainCase(caseObject);
-         for(Case c:allCasesWithoutMainCase){        
-                  duplicateCaseList.add(c);     
-         }   
+         for(Case c:getAllCaseWithoutMainCase(caseObject)){
+                  duplicateCaseList.add(c);
+         }
    }
       return duplicateCaseList; 
    }
@@ -22,7 +21,7 @@ public class FindDuplicateCase {
    public static Case getMainCase(Id caseRecordID){
       List<Case> caseFields =[SELECT Id,CaseNumber,Origin,Subject,SuppliedEmail,Status,Reason,OwnerId,Description,Country__c,SuppliedName__c,Priority,
                               Account.Name FROM Case WHERE Status!=:CLOSED_CASE AND Id=:caseRecordID ];
-      return caseFields[0];
+      return caseFields[0]!=null ? caseFields[0] : null;
    }
    
    public static List<Case> getAllCaseWithoutMainCase(Case caseSingle){ 
@@ -35,18 +34,18 @@ public class FindDuplicateCase {
                                              AND Reason=:caseSingle.Reason];
          return  allCasesWithoutMainCase;
    }
-
+   
    public static Case findMergeCase(Id mergeRecord){
       List<Case> mergeCaseFields =[SELECT Id,CaseNumber,Origin,Subject,SuppliedEmail,Status,Reason,OwnerId,Description,Country__c,SuppliedName__c,Priority,
                                     ParentId,Account.Name,Account.Language__c FROM Case WHERE Id=:mergeRecord];
-		return mergeCaseFields[0];
+      return mergeCaseFields[0];
    }
-	
+   
    public static CustomNotificationType customNotification(){
          CustomNotificationType typeNotify = [SELECT Id FROM CustomNotificationType WHERE DeveloperName ='MyCustomNotification'];
          return typeNotify;
-	}
-	
+   }
+   
    public static void caseNotification(Id caseRecordID,Boolean notify,String notificationMessage){
       if(notify !=null &&  caseRecordID !=null && notificationMessage!=null &&  notify==true){
             Messaging.CustomNotification notification = new Messaging.CustomNotification();
@@ -57,8 +56,8 @@ public class FindDuplicateCase {
             notification.setTargetId(caseRecordID);
             notification.send(new Set<String> { Userinfo.getUserId() });
       }
-	}
-	
+   }
+   
    @AuraEnabled
    public static void mergeData(Id mergeRecord,Id caseRecordID,Boolean notify){
       if(mergeRecord != null && caseRecordID!=null){
@@ -118,7 +117,7 @@ public class FindDuplicateCase {
          
       }
    } 
-
+   
    public static List<EmailMessage> getMessages(id mergeRecord){
       List<EmailMessage> dataMessages = Database.query('SELECT ' + String.join(new List<String>(EmailMessage.sObjectType.getDescribe().fields.getMap().keySet()), ',') +
                                                          ' from EmailMessage WHERE ParentId=\''+String.escapeSingleQuotes(mergeRecord)+'\'');        
