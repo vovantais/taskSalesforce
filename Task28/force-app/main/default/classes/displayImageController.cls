@@ -6,8 +6,7 @@ public class displayImageController {
    public static List<String> getImage(Id CurrentId){
       List<String> files =new List<String>();
       if(CurrentId != null){
-         List<ContentDocumentLink> cdLinks =getCdLinks(CurrentId);
-         for(ContentDocumentLink cdl: cdLinks){
+         for(ContentDocumentLink cdl: getCdLinks(CurrentId)){
             files.add(URL.getSalesforceBaseUrl().toExternalForm() + IMAGE_STORE + cdl.ContentDocument.LatestPublishedVersionID);  
          }
       }
