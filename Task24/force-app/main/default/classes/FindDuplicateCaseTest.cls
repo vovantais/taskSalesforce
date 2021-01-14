@@ -54,54 +54,55 @@ public class FindDuplicateCaseTest {
    static testmethod void getMessagesTest(){
    
    List<Case> allCasesId = [SELECT Id FROM Case];
-      FindDuplicateCase.getMessages(allCasesId[1].Id);
-      List<EmailMessage> dataMessages = Database.query('SELECT ' + String.join(new List<String>(EmailMessage.sObjectType.getDescribe().fields.getMap().keySet()), ',') +
+   List<EmailMessage> dataMessages=FindDuplicateCase.getMessages(allCasesId[1].Id);
+   dataMessages = Database.query('SELECT ' + String.join(new List<String>(EmailMessage.sObjectType.getDescribe().fields.getMap().keySet()), ',') +
                                                       ' from EmailMessage WHERE ParentId=\''+String.escapeSingleQuotes(allCasesId[1].Id)+'\'');
       
-      System.assertEquals('test@xyz.org',String.valueOf(dataMessages[0].ToAddress));
+   System.assertEquals('test@xyz.org',String.valueOf(dataMessages[0].ToAddress));
       
    }
    
    static testmethod void getMainCaseTest(){
       
       List<Case> allCasesId = [SELECT Id FROM Case];
-      FindDuplicateCase.getMainCase(allCasesId[0].Id);
-      List<Case> caseFields =[SELECT Id FROM Case WHERE  Id=:allCasesId[0].Id];
+      Case caseFields=FindDuplicateCase.getMainCase(allCasesId[0].Id);
+      caseFields =[SELECT Id,Priority FROM Case WHERE  Id=:allCasesId[0].Id];
       
-      System.assertEquals(1,caseFields.size()); 
+      System.assertEquals('Low',caseFields.Priority); 
    }
    
    static testmethod void  getAllCaseTest(){
       
       List<Case> allCases = [SELECT Id,Subject,Reason,SuppliedEmail FROM Case];
-      FindDuplicateCase.getAllCaseWithoutMainCase(allCases[0]);
-         List<Case> allCasesWithoutMainCase =[SELECT Id,Subject,SuppliedEmail,Reason,ParentId FROM Case WHERE Status!='Closed' 
+      List<Case> allCasesWithoutMainCase= FindDuplicateCase.getAllCaseWithoutMainCase(allCases[0]);
+      allCasesWithoutMainCase =[SELECT Id,Subject,SuppliedEmail,Reason,ParentId,SuppliedName__c FROM Case WHERE Status!='Closed' 
                                              AND Id !=:allCases[0].Id 
                                              AND ParentId =:allCases[0].Id
                                              AND Subject=:allCases[0].Subject
                                              AND SuppliedEmail=:allCases[0].SuppliedEmail
                                              AND Reason=:allCases[0].Reason];
       
-      System.assertEquals(1,allCasesWithoutMainCase.size()); 
+      System.assertEquals(1,allCasesWithoutMainCase.size());
+      System.assertEquals('hirocy',allCasesWithoutMainCase[0].SuppliedName__c);
       
    }
-
+   
    static testmethod void findMergeCaseTest(){
       
       List<Case> allCasesId = [SELECT Id FROM Case];
-      FindDuplicateCase.findMergeCase(allCasesId[1].Id);
-      List<Case> mergeCaseFields =[SELECT Id FROM Case WHERE Id=:allCasesId[1].Id];
+      Case mergeCaseFields =FindDuplicateCase.findMergeCase(allCasesId[1].Id);
+      mergeCaseFields =[SELECT Id,Priority FROM Case WHERE Id=:allCasesId[1].Id];
       
-      System.assertEquals(1,mergeCaseFields.size());
+      System.assertEquals('Medium',mergeCaseFields.Priority);
       
    }
    
    static testmethod void  customNotificationTest(){
       
-      FindDuplicateCase.customNotification();
-      List<CustomNotificationType> typeNotify = [SELECT Id FROM CustomNotificationType WHERE DeveloperName ='MyCustomNotification'];
-      
-      System.assertEquals(1,typeNotify.size());
+      CustomNotificationType typeNotify =FindDuplicateCase.customNotification();
+      typeNotify = [SELECT Id FROM CustomNotificationType WHERE DeveloperName ='MyCustomNotification'];
+
+      System.assertNotEquals(null,typeNotify.Id);
          
    }
    
@@ -117,9 +118,9 @@ public class FindDuplicateCaseTest {
    
    static testmethod void duplicateCaseTest(){
       
-   List<Case> allCases = [SELECT Id,Priority,Description,Subject,Reason,SuppliedEmail,SuppliedName__c,Origin,Status,Country__c,ParentId,
+      List<Case> allCases = [SELECT Id,Priority,Description,Subject,Reason,SuppliedEmail,SuppliedName__c,Origin,Status,Country__c,ParentId,
                               Account.Name,Account.Language__c FROM Case];
-   
+      
       System.assertEquals(2,allCases.size()); 
       
       update allCases[0];
